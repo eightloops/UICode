@@ -26,7 +26,7 @@ import Foundation
 
 extension Array {
   
-  mutating func pop() -> T? {
+  mutating func pop() -> Element? {
     let c = count
     if c > 0 {
       return removeLast()

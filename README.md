@@ -7,12 +7,12 @@ A Swift library for rapidly building iOS user interfaces with Autolayout in code
 
 ```swift
 let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
-let subview = UIView( frame: CGRectZero)
+let subview = UIView( frame: .zero)
 
 view.push( subview) { (v) in
-  v.pin( [.Left, .Right], inset: 3)
-  v.pin( .CenterY)
-  v.pin( .Height, multiplier: 0.5)
+  v.pin( [.left, .right], inset: 3)
+  v.pin( .centerY)
+  v.pin( .height, multiplier: 0.5)
 }
 
 view.layoutIfNeeded()

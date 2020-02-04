@@ -21,51 +21,73 @@
 //
 
 
-import Foundation
+import UIKit
 
-public extension NSLayoutConstraint {
+extension NSLayoutConstraint {
   
-  public func addToView( view: UIView? = nil) -> Bool {
+  @discardableResult
+  public func addToView( _ view: UIView? = nil) -> Bool {
     if let container = view {
       container.addConstraint( self)
       return true
-    }
-    let first = firstItem as UIView
-    if let second = secondItem as? UIView {
-      if let common = first.lowestCommonAncestor( second) {
-        common.addConstraint( self)
-        return true
-      } else {
-        return false
-      }
     } else {
-      first.addConstraint( self)
+      self.isActive = true
       return true
     }
   }
   
+  @discardableResult
   public func removeFromView( view: UIView? = nil) -> Bool {
     if let container = view {
       container.removeConstraint( self)
       return true
+    } else {
+      self.isActive = false
+      return true
     }
-    var nextView: UIView?
-    if let first = self.firstItem as? UIView {
-      if let second = self.secondItem as? UIView {
-        if let common = first.lowestCommonAncestor( second) {
-          nextView = common
+  }
+  
+  func descriptionForItem( _ item: NSObject, attribute: NSLayoutConstraint.Attribute) -> NSString {
+    var desc = item.description
+    if let view = item as? UIView {
+      desc = view.layoutDebugDescription()
+    }
+    return "\(attribute.debugDescription().uppercased) - \(desc)" as NSString
+  }
+  
+  func relationSymbol() -> NSString {
+    switch relation {
+    case .equal: return "=="
+    case .greaterThanOrEqual: return ">="
+    case .lessThanOrEqual: return "<="
+    @unknown default:
+      return "(?)"
+    }
+  }
+  
+  #if DEBUG
+  override public var description: String {
+    get {
+      if let firstItem = firstItem as? UIView {
+        let firstDesc = descriptionForItem( firstItem, attribute: firstAttribute)
+        var secondDesc: NSString?
+        if let secondItem = secondItem as? NSObject {
+          secondDesc = descriptionForItem( secondItem, attribute: secondAttribute)
+        }
+        let orientation = firstAttribute.orientation() == .Horizontal ? "H" : "V"
+        
+        let c: Double = Double( self.constant)
+        let description = NSString( format: "%@: %4.1f %@   %@", orientation, c, relationSymbol(), firstDesc)
+        if let secondDesc = secondDesc {
+          return description.stringByAppendingFormat( "  |  %@", secondDesc) as String
+        } else {
+          return description as String
         }
       } else {
-        nextView = first
+        return super.description
       }
     }
-    while let view = nextView {
-      if contains( view.constraints() as [NSLayoutConstraint], self) {
-        view.removeConstraint( self)
-        return true
-      }
-      nextView = view.superview
-    }
-    return false
   }
+  #endif
 }
+

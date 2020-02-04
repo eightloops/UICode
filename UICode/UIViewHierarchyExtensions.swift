@@ -22,24 +22,38 @@
 
 
 import UIKit
+import ObjectiveC
 
-public extension UIView {
+extension UIView {
   
-  public func push<T: UIView>( view: T, block: ((T) -> ())? = nil) -> T {
-    view.setTranslatesAutoresizingMaskIntoConstraints( false)
+  @discardableResult
+  public func push<T: UIView>( _ view: T, block: (T) -> ()) -> T {
+    view.translatesAutoresizingMaskIntoConstraints = false
     self.addSubview( view)
-    block?( view)
+    block( view)
     return view
   }
   
-  public func embed<T: UIView>( view: T, block: ((T) -> ())? = nil) -> T {
+  @discardableResult
+  public func push<T: UIView>( _ view: T) -> T {
+    return push( view, block: { (_) in () })
+  }
+  
+  @discardableResult
+  public func embed<T: UIView>( _ view: T, block: (T) -> ()) -> T {
     return push( view) { (v) in
-      v.pin( [.Top, .Right, .Bottom, .Left])
-      block?( v)
+      v.pin( [.top, .left])
+      v.pin( [.width, .height])
+      block( v)
     }
   }
   
-  public func lowestCommonAncestor( other: UIView) -> UIView? {
+  @discardableResult
+  public func embed<T: UIView>( _ view: T) -> T {
+    return embed( view, block: { (_) in () })
+  }
+  
+  public func lowestCommonAncestor( _ other: UIView) -> UIView? {
     let ownSuperview = self.superview as UIView?
     let otherSuperview = other.superview as UIView?
     
@@ -78,4 +92,165 @@ public extension UIView {
     }
     return result
   }
+  
+  
+  public func enclosingTableView() -> UITableView? {
+    var parentView = superview
+    while parentView != nil {
+      if let tableView = parentView as? UITableView {
+        return tableView
+      }
+      else {
+        parentView = parentView?.superview
+      }
+    }
+    return nil
+  }
+  
+  public func enclosingScrollView() -> UIScrollView? {
+    var parentView = superview
+    while parentView != nil {
+      if let scrollView = parentView as? UIScrollView {
+        return scrollView
+      }
+      else {
+        parentView = parentView?.superview
+      }
+    }
+    return nil
+  }
+  
+  public func firstResponder() -> UIView? {
+    if isFirstResponder {
+      return self
+    }
+    
+    for subview in subviews {
+      if let firstResponder = subview.firstResponder() {
+        return firstResponder
+      }
+    }
+    
+    return nil
+  }
+  
+  public func logViewHierarchy() {
+    logViewHierarchy( 0)
+  }
+  
+  public func logViewHierarchy( _ indent: Int) {
+    var prefix = " "
+    for _ in 0..<(indent * 2) {
+      prefix += " "
+    }
+    let address = NSString(format: "%p", self)
+    var hidden = ""
+    var alpha = ""
+    if self.isHidden {
+      hidden = " [HIDDEN]"
+    } else if self.alpha < 0.1 {
+      alpha = " [ALPHA=\(round(self.alpha * 100)/100)]"
+    }
+    var color = ""
+    if let c = backgroundColor {
+      color = " \(c.debugValues)"
+    }
+    
+    print( "\(prefix)\(self.className()) (\(address)) (\(self.frame))\(hidden)\(alpha)\(color)")
+    
+    for view in subviews {
+      view.logViewHierarchy( indent + 1)
+    }
+  }
+  
+  public func recursivelyLayoutIfNeeded() {
+    for subview in subviews {
+      subview.recursivelyLayoutIfNeeded()
+    }
+    layoutIfNeeded()
+  }
+  
+  public func recursiveSizeToFit() {
+    for view in subviews {
+      view.sizeToFit()
+    }
+    sizeToFit()
+  }
+  
+  @objc
+  open func statusBarAppearanceDidUpdate() {
+    for subview in subviews {
+      subview.statusBarAppearanceDidUpdate()
+    }
+  }
+  
+  public func removeAndReaddToSuperview() {
+    if let superview = self.superview {
+      var constraints: [NSLayoutConstraint] = []
+      for constraint in superview.constraints {
+        var first, second: UIView?
+        if let _first = constraint.firstItem as? UIView {
+          first = _first
+        }
+        if let _second = constraint.secondItem as? UIView {
+          second = _second
+        }
+        if (first == superview && second == self) || (first == self && second == superview) {
+          superview.removeConstraint( constraint)
+          constraints.append( constraint)
+        }
+      }
+      let subviews = superview.subviews as NSArray
+      let index = subviews.index( of: self)
+      self.removeFromSuperview()
+      superview.insertSubview( self, at: index)
+      superview.addConstraints( constraints)
+    }
+  }
+  
+  
+  public var debugName: String? {
+    get {
+      return objc_getAssociatedObject( self, &UIViewDebugName) as? String
+    }
+    set {
+      objc_setAssociatedObject( self, &UIViewDebugName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+  }
+  
+  func layoutDebugDescription() -> String {
+    return debugName ?? className()
+  }
+  
+  open func hide() {
+    alpha = 0.0
+  }
+  
+  open func show() {
+    alpha = 1.0
+  }
+  
+  public var pixel: CGFloat {
+    return 1.0 / (window?.screen ?? UIScreen.main).scale
+  }
+  
+  public func wouldReceiveTouches() -> Bool {
+    if let superview = self.superview, let window = window {
+      let frame = superview.convert( self.frame, to: nil)
+      let point = CGPoint(x: frame.origin.x + frame.width / 2.0, y: frame.origin.y + frame.height / 2.0)
+      if let hitView = window.hitTest( point, with: nil) {
+        if hitView == self {
+          return true
+        } else {
+          return hitView.isDescendant( of: self)
+        }
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
 }
+
+var UIViewDebugName: UInt8 = 0

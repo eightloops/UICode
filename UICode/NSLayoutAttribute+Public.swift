@@ -20,23 +20,37 @@
 // THE SOFTWARE.
 //
 
-import XCTest
-import UICode
 
-class UICodeTests: XCTestCase {
+import Foundation
+
+enum NSLayoutAttributeOrientation {
+  case horizontal
+  case vertical
+}
+
+extension NSLayoutConstraint.Attribute {
   
-  func testPushAndPin() {
-    let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
-    let subview = UIView( frame: .zero)
-    
-    view.push( subview) { (v) in
-      v.pin( [.left, .right], inset: 3)
-      v.pin( .centerY)
-      v.pin( .height, multiplier: 0.5)
+  func debugDescription() -> NSString {
+    switch self {
+    case .left:     return "Left"
+    case .right:    return "Right"
+    case .top:      return "Top"
+    case .bottom:   return "Bottom"
+    case .leading:  return "Left"
+    case .trailing: return "Right"
+    case .width:    return "Width"
+    case .height:   return "Height"
+    case .centerX:  return "CenterX"
+    case .centerY:  return "CenterY"
+    case .lastBaseline: return "Baseline"
+    default:        return "NotAnAttribute"
     }
-    
-    view.layoutIfNeeded()
-    
-    XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
+  }
+  
+  func orientation() -> NSLayoutAttributeOrientation {
+    switch self {
+    case .top, .bottom, .height, .centerY, .lastBaseline: return .vertical
+    default: return .horizontal
+    }
   }
 }
