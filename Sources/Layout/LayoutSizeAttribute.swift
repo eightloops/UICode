@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 eightloops GmbH (http://www.eightloops.com)
+// Copyright (c) 2014-2020 eightloops GmbH (http://www.eightloops.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,18 @@
 // THE SOFTWARE.
 //
 
-import Foundation
+
+import UIKit
 
 
-extension NSObject {
+public enum LayoutSizeAttribute {
+  case width
+  case height
   
-  func className() -> String {
-    var name = self.description
-    if let match = self.description.range( of: "^<[_A-Za-z0-9\\.]+:", options: .regularExpression) {
-      let fromIndex = name.index(after: match.lowerBound)
-      let toIndex = name.index(before: match.upperBound)
-      let subrange = Range(uncheckedBounds: (fromIndex, toIndex))
-      name = String( self.description[subrange])
-      if name.range( of: "[0-9]", options: .regularExpression) != nil {
-        let parts = name.components( separatedBy: CharacterSet.decimalDigits).filter( { (s) in !s.isEmpty }) as NSArray
-        let x = parts.subarray( with: NSRange( location: 1, length: parts.count - 1)) as NSArray
-        name = x.componentsJoined( by: ".")
-      }
+  func layoutAttribute() -> NSLayoutConstraint.Attribute {
+    switch self {
+    case .width:  return .width
+    case .height: return .height
     }
-    return name
   }
 }

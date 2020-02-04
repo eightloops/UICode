@@ -20,23 +20,41 @@
 // THE SOFTWARE.
 //
 
-import XCTest
-import UICode
 
-class UICodeTests: XCTestCase {
+import UIKit
+
+public enum LayoutEdgeAttribute {
+  case top
+  case right
+  case bottom
+  case left
   
-  func testPushAndPin() {
-    let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
-    let subview = UIView( frame: .zero)
-    
-    view.push( subview) { (v) in
-      v.pin( [.left, .right], inset: 3)
-      v.pin( .centerY)
-      v.pin( .height, multiplier: 0.5)
+  func layoutAttribute() -> NSLayoutConstraint.Attribute {
+    switch self {
+    case .top:     return .top
+    case .right:   return .right
+    case .bottom:  return .bottom
+    case .left:    return .left
     }
-    
-    view.layoutIfNeeded()
-    
-    XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
+  }
+  
+  func positionAttribute() -> LayoutPositionAttribute {
+    switch self {
+    case .top:    return .top
+    case .right:  return .right
+    case .bottom: return .bottom
+    case .left:   return .left
+    }
+  }
+  
+  func inverse() -> LayoutEdgeAttribute {
+    switch self {
+    case .top:    return .bottom
+    case .right:  return .left
+    case .bottom: return .top
+    case .left:   return .right
+    }
   }
 }
+
+

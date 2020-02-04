@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 eightloops GmbH (http://www.eightloops.com)
+// Copyright (c) 2014-2020 eightloops GmbH (http://www.eightloops.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,122 +24,6 @@
 import UIKit
 
 
-public enum LayoutEdgeAttribute {
-  case top
-  case right
-  case bottom
-  case left
-  
-  func layoutAttribute() -> NSLayoutConstraint.Attribute {
-    switch self {
-    case .top:     return .top
-    case .right:   return .right
-    case .bottom:  return .bottom
-    case .left:    return .left
-    }
-  }
-  
-  func positionAttribute() -> LayoutPositionAttribute {
-    switch self {
-    case .top:    return .top
-    case .right:  return .right
-    case .bottom: return .bottom
-    case .left:   return .left
-    }
-  }
-  
-  func inverse() -> LayoutEdgeAttribute {
-    switch self {
-    case .top:    return .bottom
-    case .right:  return .left
-    case .bottom: return .top
-    case .left:   return .right
-    }
-  }
-}
-
-public enum LayoutPositionAttribute {
-  case left
-  case right
-  case top
-  case bottom
-  case leading
-  case trailing
-  case centerX
-  case centerY
-  
-  case firstBaseline
-  case lastBaseline
-
-  case leftMargin
-  case rightMargin
-  case topMargin
-  case bottomMargin
-  case leadingMargin
-  case trailingMargin
-  case centerXWithinMargins
-  case centerYWithinMargins
-  
-  func layoutAttribute() -> NSLayoutConstraint.Attribute {
-    switch self {
-    case .top:      return .top
-    case .right:    return .right
-    case .bottom:   return .bottom
-    case .left:     return .left
-    case .leading:  return .leading
-    case .trailing: return .trailing
-    case .centerX:  return .centerX
-    case .centerY:  return .centerY
-      
-    case .firstBaseline: return .firstBaseline
-    case .lastBaseline: return .lastBaseline
-
-    case .leftMargin:           return .leftMargin
-    case .rightMargin:          return .rightMargin
-    case .topMargin:            return .topMargin
-    case .bottomMargin:         return .bottomMargin
-    case .leadingMargin:        return .leadingMargin
-    case .trailingMargin:       return .trailingMargin
-    case .centerXWithinMargins: return .centerXWithinMargins
-    case .centerYWithinMargins: return .centerYWithinMargins
-    }
-  }
-  
-  func edgeAttribute() -> LayoutEdgeAttribute? {
-    switch self {
-    case .top:    return .top
-    case .right:  return .right
-    case .bottom: return .bottom
-    case .left:   return .left
-    default: return nil
-    }
-  }
-}
-
-public enum LayoutSizeAttribute {
-  case width
-  case height
-  
-  func layoutAttribute() -> NSLayoutConstraint.Attribute {
-    switch self {
-    case .width:  return .width
-    case .height: return .height
-    }
-  }
-}
-
-public enum LayoutIntrinsicSizeAttribute {
-  case intrinsicWidth
-  case intrinsicHeight
-  case intrinsicSize
-}
-
-public enum LayoutDirection {
-  case horizontal
-  case vertical
-}
-
-
 public protocol LayoutConstraintItem: NSObjectProtocol {
   var superview: UIView? { get }
 }
@@ -152,7 +36,6 @@ extension UILayoutGuide: LayoutConstraintItem {
     return owningView
   }
 }
-
 
 extension LayoutConstraintItem {
   

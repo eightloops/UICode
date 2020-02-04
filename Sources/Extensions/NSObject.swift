@@ -20,23 +20,24 @@
 // THE SOFTWARE.
 //
 
-import XCTest
-import UICode
+import Foundation
 
-class UICodeTests: XCTestCase {
+
+extension NSObject {
   
-  func testPushAndPin() {
-    let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
-    let subview = UIView( frame: .zero)
-    
-    view.push( subview) { (v) in
-      v.pin( [.left, .right], inset: 3)
-      v.pin( .centerY)
-      v.pin( .height, multiplier: 0.5)
+  func className() -> String {
+    var name = self.description
+    if let match = self.description.range( of: "^<[_A-Za-z0-9\\.]+:", options: .regularExpression) {
+      let fromIndex = name.index(after: match.lowerBound)
+      let toIndex = name.index(before: match.upperBound)
+      let subrange = Range(uncheckedBounds: (fromIndex, toIndex))
+      name = String( self.description[subrange])
+      if name.range( of: "[0-9]", options: .regularExpression) != nil {
+        let parts = name.components( separatedBy: CharacterSet.decimalDigits).filter( { (s) in !s.isEmpty }) as NSArray
+        let x = parts.subarray( with: NSRange( location: 1, length: parts.count - 1)) as NSArray
+        name = x.componentsJoined( by: ".")
+      }
     }
-    
-    view.layoutIfNeeded()
-    
-    XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
+    return name
   }
 }
