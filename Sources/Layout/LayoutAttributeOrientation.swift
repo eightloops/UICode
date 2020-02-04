@@ -20,29 +20,12 @@
 // THE SOFTWARE.
 //
 
+
 import UIKit
 
-extension UIColor {
-  
-  public var debugValues: String {
-    let (r, g, b, a) = self.rgb()
-    let (red, green, blue, alpha) = (round(r * 255), round(g * 255), round(b * 255), a)
-    if red == green && green == blue {
-      return "white( \(red), \(alpha))"
-    } else {
-      return "rgba( \(red), \(green), \(blue), \(alpha))"
-    }
-  }
-  
-  public func hsb() -> (hue:CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-    var h : CGFloat = 0, s : CGFloat = 0, b : CGFloat = 0, a : CGFloat = 0
-    getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-    return (hue: h, saturation: s, brightness: b, alpha: a)
-  }
-  
-  public func rgb() -> (red:CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
-    var r : CGFloat = 0, g : CGFloat = 0, b : CGFloat = 0, a : CGFloat = 0
-    getRed( &r, green: &g, blue: &b, alpha: &a)
-    return (red: r, green: g, blue: b, alpha: a)
-  }
+
+enum LayoutAttributeOrientation {
+  case horizontal
+  case vertical
 }
+

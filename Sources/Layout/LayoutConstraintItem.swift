@@ -39,8 +39,75 @@ extension UILayoutGuide: LayoutConstraintItem {
 
 extension LayoutConstraintItem {
   
+  // MARK: -
+  // MARK: Pin position
   
-  // pin fraction
+  @discardableResult
+  public func pin( _ edge: LayoutEdgeAttribute, to: LayoutConstraintItem? = nil, inset: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
+    
+    let first = self
+    let second = to ?? self.superview!
+    let attr = edge.positionAttribute()
+    if edge == .right || edge == .bottom {
+      return second.pin( attr, to: first, constant: inset, multiplier: multiplier, relation: relation, priority: priority, container: container)
+    } else {
+      return first.pin( attr, to: second, constant: inset, multiplier: multiplier, relation: relation, priority: priority, container: container)
+    }
+  }
+  
+  @discardableResult
+  public func pin( _ attr: LayoutPositionAttribute, to: LayoutConstraintItem? = nil, toAttr: NSLayoutConstraint.Attribute? = nil, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
+    
+    let second = to ?? self.superview!
+    let secondAttr = toAttr ?? attr.layoutAttribute()
+    let constraint = NSLayoutConstraint(item: self, attribute: attr.layoutAttribute(), relatedBy: relation, toItem: second, attribute: secondAttr, multiplier: multiplier, constant: constant)
+    constraint.priority = priority
+    constraint.addToView( container)
+    return constraint
+  }
+  
+  @discardableResult
+  public func pin( _ attr: LayoutEdgeAttribute, to: LayoutConstraintItem, spacing: CGFloat, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
+    let toAttr = attr.inverse().layoutAttribute()
+    return pin( attr.positionAttribute(), to: to, toAttr: toAttr, constant: spacing, relation: relation, priority: priority, container: container)
+  }
+  
+  @discardableResult
+  public func pin( _ attr: LayoutPositionAttribute, to: LayoutConstraintItem? = nil, toAttr: NSLayoutConstraint.Attribute? = nil, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
+    if let edge = attr.edgeAttribute() {
+      if toAttr == nil || toAttr == attr.layoutAttribute() && multiplier == 1.0 {
+        return pin( edge, to: to, inset: 0.0, multiplier: multiplier, relation: relation, priority: priority, container: container)
+      }
+    }
+    return pin( attr, to: to, toAttr: toAttr, constant: 0.0, multiplier: multiplier, relation: relation, priority: priority, container: container)
+  }
+  
+  // MARK: -
+  // MARK: Pin multiple positions
+  
+  @discardableResult
+  public func pin( _ edges: [LayoutEdgeAttribute], to: LayoutConstraintItem? = nil, inset: CGFloat, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
+    return edges.map() { (edge) in
+      return self.pin( edge, to: to, inset: inset, relation: relation, priority: priority, container: container)
+    }
+  }
+  
+  @discardableResult
+  public func pin( _ attrs: [LayoutPositionAttribute], to: LayoutConstraintItem? = nil, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
+    return attrs.map() { (attr) in
+      return self.pin( attr, to: to, toAttr: attr.layoutAttribute(), constant: constant, multiplier: multiplier, relation: relation, priority: priority, container: container)
+    }
+  }
+  
+  @discardableResult
+  public func pin( _ attrs: [LayoutPositionAttribute], to: LayoutConstraintItem? = nil, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
+    return attrs.map() { (attr) in
+      return self.pin( attr, to: to, toAttr: attr.layoutAttribute(), multiplier: multiplier, relation: relation, priority: priority, container: container)
+    }
+  }
+
+  // MARK: -
+  // MARK: Pin fraction
   
   @discardableResult
   public func pin( _ edge: LayoutEdgeAttribute, to: LayoutConstraintItem? = nil, fraction: CGFloat, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
@@ -80,91 +147,15 @@ extension LayoutConstraintItem {
     }
   }
   
-  
-  // pin position
-  
-  @discardableResult
-  public func pin( _ edge: LayoutEdgeAttribute, to: LayoutConstraintItem? = nil, inset: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
-    
-    let first = self
-    let second = to ?? self.superview!
-    let attr = edge.positionAttribute()
-    if edge == .right || edge == .bottom {
-      return second.pin( attr, to: first, constant: inset, multiplier: multiplier, relation: relation, priority: priority, container: container)
-    } else {
-      return first.pin( attr, to: second, constant: inset, multiplier: multiplier, relation: relation, priority: priority, container: container)
-    }
-  }
-  
-  @discardableResult
-  public func pin( _ attr: LayoutPositionAttribute, to: LayoutConstraintItem? = nil, toAttr: NSLayoutConstraint.Attribute? = nil, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
-    
-    let second = to ?? self.superview!
-    let secondAttr = toAttr ?? attr.layoutAttribute()
-    let constraint = NSLayoutConstraint(item: self, attribute: attr.layoutAttribute(), relatedBy: relation, toItem: second, attribute: secondAttr, multiplier: multiplier, constant: constant)
-    constraint.priority = priority
-    constraint.addToView( container)
-    return constraint
-  }
-  
-  @discardableResult
-  public func pin( _ attr: LayoutEdgeAttribute, to: LayoutConstraintItem?, spacing: CGFloat, inset: CGFloat? = nil, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
-    let toAttr: NSLayoutConstraint.Attribute
-    if to == nil {
-      toAttr = attr.layoutAttribute()
-    } else {
-      toAttr = attr.inverse().layoutAttribute()
-    }
-    let constant: CGFloat
-    if let inset = inset, to == nil {
-      constant = inset
-    } else {
-      constant = spacing
-    }
-    return pin( attr.positionAttribute(), to: to, toAttr: toAttr, constant: constant, relation: relation, priority: priority, container: container)
-  }
-  
-  @discardableResult
-  public func pin( _ attr: LayoutPositionAttribute, to: LayoutConstraintItem? = nil, toAttr: NSLayoutConstraint.Attribute? = nil, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
-    if let edge = attr.edgeAttribute() {
-      if toAttr == nil || toAttr == attr.layoutAttribute() && multiplier == 1.0 {
-        return pin( edge, to: to, inset: 0.0, multiplier: multiplier, relation: relation, priority: priority, container: container)
-      }
-    }
-    return pin( attr, to: to, toAttr: toAttr, constant: 0.0, multiplier: multiplier, relation: relation, priority: priority, container: container)
-  }
-  
-  
-  // pin multiple positions
-  
-  @discardableResult
-  public func pin( _ edges: [LayoutEdgeAttribute], to: LayoutConstraintItem? = nil, inset: CGFloat, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
-    return edges.map() { (edge) in
-      return self.pin( edge, to: to, inset: inset, relation: relation, priority: priority, container: container)
-    }
-  }
-  
-  @discardableResult
-  public func pin( _ attrs: [LayoutPositionAttribute], to: LayoutConstraintItem? = nil, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
-    return attrs.map() { (attr) in
-      return self.pin( attr, to: to, toAttr: attr.layoutAttribute(), constant: constant, multiplier: multiplier, relation: relation, priority: priority, container: container)
-    }
-  }
-  
-  @discardableResult
-  public func pin( _ attrs: [LayoutPositionAttribute], to: LayoutConstraintItem? = nil, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
-    return attrs.map() { (attr) in
-      return self.pin( attr, to: to, toAttr: attr.layoutAttribute(), multiplier: multiplier, relation: relation, priority: priority, container: container)
-    }
-  }
-  
+
 }
 
 
 extension UIView {
   
-  // pin size
-  
+  // MARK: -
+  // MARK: Pin size
+
   @discardableResult
   public func pin( _ attr: LayoutSizeAttribute, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
     let constraint = NSLayoutConstraint(item: self, attribute: attr.layoutAttribute(), relatedBy: relation, toItem: nil, attribute: attr.layoutAttribute(), multiplier: multiplier, constant: constant)
@@ -188,8 +179,8 @@ extension UIView {
     return constraint
   }
   
-  
-  // pin multiple sizes
+  // MARK: -
+  // MARK: Pin multiple sizes
   
   @discardableResult
   public func pin( _ attrs: [LayoutSizeAttribute], constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
@@ -212,8 +203,31 @@ extension UIView {
     }
   }
   
+  // MARK: -
+  // MARK: Pin intrinsic size
   
-  // unpin size
+  public func pin( _ type: LayoutIntrinsicSizeAttribute, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required) {
+    var axes = [NSLayoutConstraint.Axis]()
+    if type == .intrinsicHeight || type == .intrinsicSize {
+      axes.append( .vertical)
+    }
+    if type == .intrinsicWidth || type == .intrinsicSize {
+      axes.append( .horizontal)
+    }
+    if relation == .equal || relation == .greaterThanOrEqual {
+      for axis in axes {
+        self.setContentCompressionResistancePriority( priority, for: axis)
+      }
+    }
+    if relation == .equal || relation == .lessThanOrEqual {
+      for axis in axes {
+        self.setContentHuggingPriority( priority, for: axis)
+      }
+    }
+  }
+
+  // MARK: -
+  // MARK: Unpin size
   
   @discardableResult
   public func unpin( _ attr: LayoutSizeAttribute, from: UIView, fromAttr: NSLayoutConstraint.Attribute? = nil, constant: CGFloat? = nil, multiplier: CGFloat? = nil, relation: NSLayoutConstraint.Relation? = nil, priority: UILayoutPriority? = nil, container: UIView? = nil) -> [NSLayoutConstraint] {
@@ -265,8 +279,8 @@ extension UIView {
     return constraints
   }
   
-  
-  // unpin multiple sizes
+  // MARK: -
+  // MARK: Unpin multiple sizes
   
   @discardableResult
   public func unpin( _ attrs: [LayoutSizeAttribute], from: UIView, fromAttr: NSLayoutConstraint.Attribute? = nil, multiplier: CGFloat? = nil, relation: NSLayoutConstraint.Relation? = nil, priority: UILayoutPriority? = nil, container: UIView? = nil) -> [NSLayoutConstraint] {
@@ -301,8 +315,8 @@ extension UIView {
     return constraints
   }
   
-  
-  // unpin position
+  // MARK: -
+  // MARK: Unpin position
   
   @discardableResult
   public func unpin( _ attr: LayoutPositionAttribute, from: UIView? = nil, fromAttr: NSLayoutConstraint.Attribute? = nil, constant: CGFloat? = nil, multiplier: CGFloat? = nil, relation: NSLayoutConstraint.Relation? = nil, priority: UILayoutPriority? = nil, container: UIView? = nil) -> [NSLayoutConstraint] {
@@ -315,8 +329,8 @@ extension UIView {
     }
   }
   
-  
-  // unpin multiple positions
+  // MARK: -
+  // MARK: Unpin multiple positions
   
   @discardableResult
   public func unpin( _ attrs: [LayoutPositionAttribute], from: UIView? = nil, fromAttr: NSLayoutConstraint.Attribute? = nil, constant: CGFloat? = nil, multiplier: CGFloat? = nil, relation: NSLayoutConstraint.Relation? = nil, priority: UILayoutPriority? = nil, container: UIView? = nil) -> [NSLayoutConstraint] {
@@ -330,8 +344,8 @@ extension UIView {
   }
   
   
-  
-  // pin helper methods
+  // MARK: -
+  // MARK: Pin helper methods
   
   @discardableResult
   func containerForView( _ view: UIView?, container: UIView?) -> UIView? {
@@ -387,58 +401,5 @@ extension UIView {
       }
     }
     return constraints
-  }
-
-  
-
-  public func pin( _ type: LayoutIntrinsicSizeAttribute, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required) {
-    var axes = [NSLayoutConstraint.Axis]()
-    if type == .intrinsicHeight || type == .intrinsicSize {
-      axes.append( .vertical)
-    }
-    if type == .intrinsicWidth || type == .intrinsicSize {
-      axes.append( .horizontal)
-    }
-    if relation == .equal || relation == .greaterThanOrEqual {
-      for axis in axes {
-        self.setContentCompressionResistancePriority( priority, for: axis)
-      }
-    }
-    if relation == .equal || relation == .lessThanOrEqual {
-      for axis in axes {
-        self.setContentHuggingPriority( priority, for: axis)
-      }
-    }
-  }
-  
-  public func tie( _ direction: LayoutDirection, views: [UIView], relation: NSLayoutConstraint.Relation = .equal, space: CGFloat = 0.0, priority: UILayoutPriority = .required, install: Bool = true) -> [NSLayoutConstraint] {
-    var constraints: [NSLayoutConstraint] = []
-    let viewAttr: LayoutPositionAttribute = direction == .vertical ? .top : .left
-    let lastAttr: NSLayoutConstraint.Attribute = direction == .vertical ? .bottom : .right
-    var last: UIView? = nil
-    for view in views {
-      if let last = last {
-        var container: UIView? = nil
-        if install {
-          container = self
-        }
-        let constraint = view.pin( viewAttr, to: last, toAttr: lastAttr, constant: space, relation: relation, priority: priority, container: container)
-        constraints.append( constraint)
-      }
-      last = view
-    }
-    return constraints
-  }
-  
-  public func tieSubviews( _ direction: LayoutDirection, space: CGFloat = 0.0, priority: UILayoutPriority = .required) -> [NSLayoutConstraint] {
-    return tie( direction, views: self.subviews , space: space, priority: priority)
-  }
-  
-  public var compat_safeAreaLayoutGuide: LayoutConstraintItem {
-    if #available(iOS 11.0, *) {
-      return safeAreaLayoutGuide
-    } else {
-      return self
-    }
   }
 }

@@ -23,11 +23,6 @@
 
 import UIKit
 
-enum NSLayoutAttributeOrientation {
-  case horizontal
-  case vertical
-}
-
 extension NSLayoutConstraint.Attribute {
   
   func debugDescription() -> NSString {
@@ -57,7 +52,7 @@ extension NSLayoutConstraint.Attribute {
     }
   }
   
-  func orientation() -> NSLayoutAttributeOrientation {
+  var orientation: LayoutAttributeOrientation {
     switch self {
     case .top, .bottom, .height, .centerY, .firstBaseline, .lastBaseline, .topMargin, .bottomMargin, .centerYWithinMargins:
       return .vertical

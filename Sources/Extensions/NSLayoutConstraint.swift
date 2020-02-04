@@ -46,48 +46,5 @@ extension NSLayoutConstraint {
       return true
     }
   }
-  
-  func descriptionForItem( _ item: NSObject, attribute: NSLayoutConstraint.Attribute) -> NSString {
-    var desc = item.description
-    if let view = item as? UIView {
-      desc = view.layoutDebugDescription()
-    }
-    return "\(attribute.debugDescription().uppercased) - \(desc)" as NSString
-  }
-  
-  func relationSymbol() -> NSString {
-    switch relation {
-    case .equal: return "=="
-    case .greaterThanOrEqual: return ">="
-    case .lessThanOrEqual: return "<="
-    @unknown default:
-      return "(?)"
-    }
-  }
-  
-  #if DEBUG
-  override public var description: String {
-    get {
-      if let firstItem = firstItem as? UIView {
-        let firstDesc = descriptionForItem( firstItem, attribute: firstAttribute)
-        var secondDesc: NSString?
-        if let secondItem = secondItem as? NSObject {
-          secondDesc = descriptionForItem( secondItem, attribute: secondAttribute)
-        }
-        let orientation = firstAttribute.orientation() == .horizontal ? "H" : "V"
-        
-        let c: Double = Double( self.constant)
-        let description = NSString( format: "%@: %4.1f %@   %@", orientation, c, relationSymbol(), firstDesc)
-        if let secondDesc = secondDesc {
-          return description.appendingFormat( "  |  %@", secondDesc) as String
-        } else {
-          return description as String
-        }
-      } else {
-        return super.description
-      }
-    }
-  }
-  #endif
 }
 
