@@ -67,16 +67,16 @@ extension UIView {
       var ownChain = self.viewChain()
       var otherChain = other.viewChain()
       
-      var ownCandidate: UIView? = ownChain.pop()
-      var otherCandidate: UIView? = otherChain.pop()
+      var ownCandidate: UIView? = ownChain.popLast()
+      var otherCandidate: UIView? = otherChain.popLast()
       
       var result: UIView? = nil
       
       while ownCandidate != nil && ownCandidate == otherCandidate {
         result = ownCandidate
         
-        ownCandidate = ownChain.pop()
-        otherCandidate = otherChain.pop()
+        ownCandidate = ownChain.popLast()
+        otherCandidate = otherChain.popLast()
       }
       
       return result

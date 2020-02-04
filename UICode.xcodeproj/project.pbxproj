@@ -14,7 +14,6 @@
 		D6AE538E1A38E682006E9BF0 /* UICode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6AE53821A38E682006E9BF0 /* UICode.framework */; };
 		D6AE539F1A38E6DA006E9BF0 /* UIViewConstraintExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE539E1A38E6DA006E9BF0 /* UIViewConstraintExtensions.swift */; };
 		D6AE53A11A38E74F006E9BF0 /* UIViewHierarchyExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE53A01A38E74F006E9BF0 /* UIViewHierarchyExtensions.swift */; };
-		D6AE53A31A38E785006E9BF0 /* NSArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE53A21A38E785006E9BF0 /* NSArrayExtensions.swift */; };
 		D6AE53A51A38E7C6006E9BF0 /* NSLayoutConstraintExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE53A41A38E7C6006E9BF0 /* NSLayoutConstraintExtensions.swift */; };
 		D6AE53A91A38EB5B006E9BF0 /* UICodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE53A81A38EB5B006E9BF0 /* UICodeTests.swift */; };
 /* End PBXBuildFile section */
@@ -40,7 +39,6 @@
 		D6AE53931A38E682006E9BF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6AE539E1A38E6DA006E9BF0 /* UIViewConstraintExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewConstraintExtensions.swift; sourceTree = "<group>"; };
 		D6AE53A01A38E74F006E9BF0 /* UIViewHierarchyExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewHierarchyExtensions.swift; sourceTree = "<group>"; };
-		D6AE53A21A38E785006E9BF0 /* NSArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArrayExtensions.swift; sourceTree = "<group>"; };
 		D6AE53A41A38E7C6006E9BF0 /* NSLayoutConstraintExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSLayoutConstraintExtensions.swift; sourceTree = "<group>"; };
 		D6AE53A81A38EB5B006E9BF0 /* UICodeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UICodeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,7 +87,6 @@
 				D6AE53851A38E682006E9BF0 /* Supporting Files */,
 				D6AE539E1A38E6DA006E9BF0 /* UIViewConstraintExtensions.swift */,
 				D6AE53A01A38E74F006E9BF0 /* UIViewHierarchyExtensions.swift */,
-				D6AE53A21A38E785006E9BF0 /* NSArrayExtensions.swift */,
 				D6AE53A41A38E7C6006E9BF0 /* NSLayoutConstraintExtensions.swift */,
 				D635261F23E970D7005EDC93 /* NSLayoutAttribute+Public.swift */,
 				D635262123E97118005EDC93 /* NSObjectExtensions.swift */,
@@ -231,7 +228,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6AE53A31A38E785006E9BF0 /* NSArrayExtensions.swift in Sources */,
 				D635262423E9712B005EDC93 /* UIColorExtensions.swift in Sources */,
 				D6AE53A51A38E7C6006E9BF0 /* NSLayoutConstraintExtensions.swift in Sources */,
 				D6AE53A11A38E74F006E9BF0 /* UIViewHierarchyExtensions.swift in Sources */,
