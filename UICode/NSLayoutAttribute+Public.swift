@@ -32,25 +32,41 @@ extension NSLayoutConstraint.Attribute {
   
   func debugDescription() -> NSString {
     switch self {
-    case .left:     return "Left"
-    case .right:    return "Right"
-    case .top:      return "Top"
-    case .bottom:   return "Bottom"
-    case .leading:  return "Left"
-    case .trailing: return "Right"
-    case .width:    return "Width"
-    case .height:   return "Height"
-    case .centerX:  return "CenterX"
-    case .centerY:  return "CenterY"
-    case .lastBaseline: return "Baseline"
-    default:        return "NotAnAttribute"
+    case .left:     return "left"
+    case .right:    return "right"
+    case .top:      return "top"
+    case .bottom:   return "bottom"
+    case .leading:  return "left"
+    case .trailing: return "right"
+    case .width:    return "width"
+    case .height:   return "height"
+    case .centerX:  return "centerX"
+    case .centerY:  return "centerY"
+    case .lastBaseline:   return "lastBaseline"
+    case .firstBaseline:  return "firstBaseline"
+    case .leftMargin:     return "leftMargin"
+    case .rightMargin:    return "rightMargin"
+    case .topMargin:      return "topMargin"
+    case .bottomMargin:   return "bottomMargin"
+    case .leadingMargin:  return "leadingMargin"
+    case .trailingMargin: return "trailingMargin"
+    case .centerXWithinMargins: return "centerXWithinMargins"
+    case .centerYWithinMargins: return "centerYWithinMargins"
+    case .notAnAttribute: return "notAnAttribute"
+    @unknown default:     return "unknown"
     }
   }
   
   func orientation() -> NSLayoutAttributeOrientation {
     switch self {
-    case .top, .bottom, .height, .centerY, .lastBaseline: return .vertical
-    default: return .horizontal
+    case .top, .bottom, .height, .centerY, .firstBaseline, .lastBaseline, .topMargin, .bottomMargin, .centerYWithinMargins:
+      return .vertical
+    case .left, .right, .width, .leading, .trailing, .centerX, .leftMargin, .rightMargin, .leadingMargin, .trailingMargin, .centerXWithinMargins:
+      return .horizontal
+    case .notAnAttribute:
+      return .vertical
+    @unknown default:
+      return .vertical
     }
   }
 }
