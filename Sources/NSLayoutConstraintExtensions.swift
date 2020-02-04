@@ -74,12 +74,12 @@ extension NSLayoutConstraint {
         if let secondItem = secondItem as? NSObject {
           secondDesc = descriptionForItem( secondItem, attribute: secondAttribute)
         }
-        let orientation = firstAttribute.orientation() == .Horizontal ? "H" : "V"
+        let orientation = firstAttribute.orientation() == .horizontal ? "H" : "V"
         
         let c: Double = Double( self.constant)
         let description = NSString( format: "%@: %4.1f %@   %@", orientation, c, relationSymbol(), firstDesc)
         if let secondDesc = secondDesc {
-          return description.stringByAppendingFormat( "  |  %@", secondDesc) as String
+          return description.appendingFormat( "  |  %@", secondDesc) as String
         } else {
           return description as String
         }

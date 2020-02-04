@@ -21,7 +21,7 @@
 //
 
 
-import Foundation
+import UIKit
 
 enum NSLayoutAttributeOrientation {
   case horizontal
