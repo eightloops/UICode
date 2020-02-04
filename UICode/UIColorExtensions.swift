@@ -28,9 +28,9 @@ extension UIColor {
     let (r, g, b, a) = self.rgb()
     let (red, green, blue, alpha) = (round(r * 255), round(g * 255), round(b * 255), a)
     if red == green && green == blue {
-      return "White( \(red), \(alpha))"
+      return "white( \(red), \(alpha))"
     } else {
-      return "RGBA( \(red), \(green), \(blue), \(alpha))"
+      return "rgba( \(red), \(green), \(blue), \(alpha))"
     }
   }
   

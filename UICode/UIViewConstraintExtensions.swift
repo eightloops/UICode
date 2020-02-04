@@ -68,9 +68,9 @@ public enum LayoutPositionAttribute {
   case centerX
   case centerY
   
-  case baseline
   case firstBaseline
-  
+  case lastBaseline
+
   case leftMargin
   case rightMargin
   case topMargin
@@ -91,9 +91,9 @@ public enum LayoutPositionAttribute {
     case .centerX:  return .centerX
     case .centerY:  return .centerY
       
-    case .baseline:      return .lastBaseline
     case .firstBaseline: return .firstBaseline
-      
+    case .lastBaseline: return .lastBaseline
+
     case .leftMargin:           return .leftMargin
     case .rightMargin:          return .rightMargin
     case .topMargin:            return .topMargin
@@ -142,20 +142,13 @@ public enum LayoutDirection {
 
 public protocol LayoutConstraintItem: NSObjectProtocol {
   var superview: UIView? { get }
-  var nearestView: UIView? { get }
 }
 
 extension UIView: LayoutConstraintItem {
-  public var nearestView: UIView? {
-    return self
-  }
 }
 
 extension UILayoutGuide: LayoutConstraintItem {
   public var superview: UIView? {
-    return owningView
-  }
-  public var nearestView: UIView? {
     return owningView
   }
 }
