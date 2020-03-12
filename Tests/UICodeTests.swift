@@ -29,14 +29,28 @@ class UICodeTests: XCTestCase {
     let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
     let subview = UIView( frame: .zero)
     
-    view.push( subview) { (v) in
+    view.push( subview) { v in
       v.pin( [.left, .right], inset: 3)
       v.pin( .centerY)
       v.pin( .height, multiplier: 0.5)
     }
     
     view.layoutIfNeeded()
+    XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
+  }
+  
+  func testAutolayoutWithSystemAPI() {
+    let view = UIView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
+    let subview = UIView( frame: .zero)
     
+    subview.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview( subview)
+    subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 3).isActive = true
+    view.rightAnchor.constraint(equalTo: subview.rightAnchor, constant: 3).isActive = true
+    view.centerYAnchor.constraint(equalTo: subview.centerYAnchor).isActive = true
+    subview.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5).isActive = true
+    
+    view.layoutIfNeeded()
     XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
   }
 }
