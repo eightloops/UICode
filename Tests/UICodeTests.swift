@@ -53,4 +53,26 @@ class UICodeTests: XCTestCase {
     view.layoutIfNeeded()
     XCTAssertEqual( subview.frame, CGRect( x: 3, y: 5, width: 24, height: 10))
   }
+  
+  func testStackView() {
+    let stackView = UIStackView( frame: CGRect( x: 0, y: 0, width: 30, height: 20))
+    stackView.axis = .vertical
+    stackView.alignment = .center
+    let subview1 = UIView( frame: .zero)
+    let subview2 = UIView( frame: .zero)
+
+    stackView.push( subview1) { v in
+      v.pin( .height, multiplier: 0.5)
+      v.pin( .width)
+    }
+    
+    stackView.push( subview2) { v in
+      v.pin( .height, multiplier: 0.5)
+      v.pin( .width, 20)
+    }
+
+    stackView.layoutIfNeeded()
+    XCTAssertEqual( subview1.frame, CGRect( x: 0, y: 0, width: 30, height: 10))
+    XCTAssertEqual( subview2.frame, CGRect( x: 5, y: 10, width: 20, height: 10))
+  }
 }

@@ -28,8 +28,12 @@ extension UIView {
   
   @discardableResult
   public func push<T: UIView>( _ view: T, block: (T) throws -> ()) rethrows -> T {
-    view.translatesAutoresizingMaskIntoConstraints = false
-    self.addSubview( view)
+    if let stackView = self as? UIStackView {
+      stackView.addArrangedSubview( view)
+    } else {
+      view.translatesAutoresizingMaskIntoConstraints = false
+      self.addSubview( view)
+    }
     try block( view)
     return view
   }
