@@ -157,7 +157,7 @@ extension UIView {
   // MARK: Pin size
 
   @discardableResult
-  public func pin( _ attr: LayoutSizeAttribute, constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
+  public func pin( _ attr: LayoutSizeAttribute, _ constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> NSLayoutConstraint {
     let constraint = NSLayoutConstraint(item: self, attribute: attr.layoutAttribute(), relatedBy: relation, toItem: nil, attribute: attr.layoutAttribute(), multiplier: multiplier, constant: constant)
     constraint.priority = priority
     constraint.addToView( container)
@@ -183,9 +183,9 @@ extension UIView {
   // MARK: Pin multiple sizes
   
   @discardableResult
-  public func pin( _ attrs: [LayoutSizeAttribute], constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
+  public func pin( _ attrs: [LayoutSizeAttribute], _ constant: CGFloat, multiplier: CGFloat = 1.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required, container: UIView? = nil) -> [NSLayoutConstraint] {
     return attrs.map() { (attr) in
-      return self.pin( attr, constant: constant, multiplier: multiplier, relation: relation, priority: priority, container: container)
+      return self.pin( attr, constant, multiplier: multiplier, relation: relation, priority: priority, container: container)
     }
   }
   
