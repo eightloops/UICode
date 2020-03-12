@@ -23,8 +23,6 @@
 
 import UIKit
 
-
-
 public enum LayoutDirection {
   case horizontal
   case vertical
